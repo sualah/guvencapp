@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#F44336</color>
+    <color name="colorPrimaryDark">#57000D</color>
+    <color name="colorAccent">#FFFF</color>
+    
+    
+    <color name="hints">#b8b8b8</color>
+    <color name="text_color">#222222</color>
+    <!--<color name="primary">#E43F3F</color>-->
+    <color name="primary">#FFFF</color>
+    <!--<color name="primary">#FFFFFF</color>-->
+    <color name="primary_dark">#3F51B5</color>
+    <color name="dark_blue">#0000FF</color>
+    <!--<color name="primary_dark">#E12929</color>-->
+    <!--<color name="primary_darker">#CC1D1D</color>-->
+    <color name="primary_darker">#3F51B5</color>
+    <color name="colorOrange">#F68159</color>
+    <color name="colorLightGray">#a6abae</color>
+    <color name="colorGray">#495C67</color>
+
+    <color name="colorBackroundWhite">#f0f2ea</color>
+    <color name="accent">#3F51B5</color>
+
+    <color name="black">#000000</color>
+    <color name="red"> #F44336</color>
+    <color name="green">#4CAF50</color>
+    <color name="jet">#222222</color>
+    <color name="oil">#333333</color>
+    <color name="monsoon">#777777</color>
+    <color name="jumbo">#888888</color>
+    <color name="aluminum">#999999</color>
+    <color name="base">#AAAAAA</color>
+    <color name="iron">#CCCCCC</color>
+    <color name="white">#FFFFFF</color>
+    <color name="sea_blue"> #64B5F6</color>
+    <color name="pink_200"> #F48FB1</color>
+    <color name="lime_200"> #E6EE9C</color>
+</resources>

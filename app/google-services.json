@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "134498378492",
+    "firebase_url": "https://guvencapp.firebaseio.com",
+    "project_id": "guvencapp",
+    "storage_bucket": "guvencapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:134498378492:android:9ee00610b03b6d5f",
+        "android_client_info": {
+          "package_name": "com.tr.makina.guvencapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "134498378492-jigdkc1nbm2ua1ai7mtqb9g86lgkf0cg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tr.makina.guvencapp",
+            "certificate_hash": "b5cec8845b1710999c7b6c253a3040bd3234bb2f"
+          }
+        },
+        {
+          "client_id": "134498378492-l9eppt59vtmd30vqg65o0k426ja3lbbs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8SS7P7c6FB7vBdG2tty8_bDVnsnGlhk8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "134498378492-l9eppt59vtmd30vqg65o0k426ja3lbbs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

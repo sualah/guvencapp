@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fillViewport="true"
+    android:background="@drawable/bacground_gradient"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bacground_gradient"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:context=".Welcome.ui.WelcomeActivity">
+
+
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:src="@drawable/g2"
+                />
+
+            <TextView
+                android:id="@+id/logo_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:textColor="@color/colorAccent"
+                android:textStyle="italic"
+                android:fontFamily="@font/ocramedium"
+                android:text="@string/logo_description"
+                android:layout_marginBottom="100dp"/>
+            <!--<com.airbnb.lottie.LottieAnimationView-->
+            <!--android:id="@+id/animation_view"-->
+            <!--android:layout_width="100dp"-->
+            <!--android:layout_height="100dp"-->
+            <!--app:lottie_rawRes="@raw/checkeddone"-->
+            <!--android:layout_margin="10dp"-->
+            <!--app:lottie_loop="true"-->
+            <!--app:lottie_autoPlay="true" />-->
+            <Button
+                android:id="@+id/login_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimaryDark"
+                android:gravity="center"
+                android:textColor="@color/colorAccent"
+                android:textSize="15sp"
+                android:textAlignment="center"
+                android:layout_margin="10dp"
+                android:text="@string/login"/>
+            <Button
+                android:id="@+id/signup_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorAccent"
+                android:textColor="@color/colorPrimaryDark"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textSize="15sp"
+                android:layout_margin="10dp"
+                android:text="@string/signup"/>
+
+
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:textColor="@color/colorAccent"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="15sp"
+            android:text="@string/copy_right_desc" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</ScrollView>
