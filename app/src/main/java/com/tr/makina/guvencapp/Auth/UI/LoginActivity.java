@@ -1,18 +1,15 @@
 package com.tr.makina.guvencapp.Auth.UI;
 
-import android.app.ActivityOptions;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -22,19 +19,27 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.tr.makina.guvencapp.Dashboard.ui.MainActivity;
 import com.tr.makina.guvencapp.R;
 import com.tr.makina.guvencapp.Utils.EmailValidator;
 import com.tr.makina.guvencapp.Welcome.ui.WelcomeActivity;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import es.dmoral.toasty.Toasty;
+import com.wang.avi.AVLoadingIndicatorView;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+    @BindView(R.id.signup_link)
     TextView signup_link;
+    @BindView(R.id.login_btn)
     Button login_btn;
+    @BindView(R.id.email_field)
     TextInputEditText email_field;
+    @BindView(R.id.password_field)
     TextInputEditText password_field;
+    @BindView(R.id.loading_view)
+    LinearLayout loading_view;
     private FirebaseAuth mAuth;
     private String TAG = "login_activity";
     private String email,password;
@@ -43,14 +48,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        ButterKnife.bind(this);
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        //initialize views
-        signup_link = findViewById(R.id.signup_link);
-        login_btn = findViewById(R.id.login_btn);
-        email_field = findViewById(R.id.email_field);
-        password_field = findViewById(R.id.password_field);
 
         //set transparency for some views
         signup_link.setAlpha(0.7f);
@@ -74,6 +76,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public  void logIn(String email, String password){
+        showLoader();
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -84,8 +87,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toasty.success(getApplicationContext(),getString(R.string.login_successful), Toast.LENGTH_SHORT).show();
                             updateUI(user);
+                            hideLoader();
                         } else {
                             // If sign in fails, display a message to the user.
+                            hideLoader();
                             try {
                                 throw task.getException();
                             } catch(FirebaseAuthWeakPasswordException e) {
@@ -118,6 +123,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     public void updateUI(FirebaseUser currentUser){
         if(currentUser != null){
+            WelcomeActivity.logged_in_user.setUid(currentUser.getUid());
             Toasty.success(getApplicationContext(),getString(R.string.welcome), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
@@ -150,6 +156,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         startActivity(intent);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
 
+    }
+
+    public void showLoader(){
+        loading_view.setVisibility(View.VISIBLE);
+        login_btn.setVisibility(View.GONE);
+        signup_link.setVisibility(View.GONE);
+    }
+
+    public void hideLoader(){
+        loading_view.setVisibility(View.GONE);
+        login_btn.setVisibility(View.VISIBLE);
+        signup_link.setVisibility(View.VISIBLE);
     }
 
     public boolean validated(){

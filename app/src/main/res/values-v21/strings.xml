@@ -40,6 +40,7 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="phone">Phone Number</string>
     <string name="email_empty_error">Email cannot be empty.</string>
+    <string name="name_empty_error">User name cannot be empty.</string>
     <string name="password_empty_error">Password field cannot be empty.</string>
     <string name="password_mismatch_error">Sorry the two passwords does not match.</string>
     <string name="user_registration_failure">Creating new account failed. Please try again or contact support.</string>
@@ -48,4 +49,7 @@
     <string name="password_length_error">Sorry password must be alteast 6 characters long.</string>
     <string name="email_invalid_error">Email is invalid. Please enter correct email.</string>
     <string name="login_description">Log In To Experience More</string>
+    <string name="search">Search</string>
+    <string name="profile">Profile</string>
+    <string name="help">Help</string>
 </resources>

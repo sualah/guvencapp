@@ -69,6 +69,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:18.0.0'
     implementation 'com.google.firebase:firebase-storage:18.0.0'
     implementation 'com.google.firebase:firebase-database:18.0.0'
+    implementation 'androidx.preference:preference:1.1.0-rc01'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"

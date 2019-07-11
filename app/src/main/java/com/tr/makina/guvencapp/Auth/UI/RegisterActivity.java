@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,15 +31,27 @@ import com.tr.makina.guvencapp.Welcome.ui.WelcomeActivity;
 
 import java.util.HashMap;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import es.dmoral.toasty.Toasty;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
+    @BindView(R.id.signup_btn)
     Button signup_btn;
+    @BindView(R.id.login_link)
     TextView login_link;
+    @BindView(R.id.email_field)
     TextInputEditText email_field;
+    @BindView(R.id.password_field)
     TextInputEditText password_field;
+    @BindView(R.id.confirm_password_field)
     TextInputEditText confirm_password_field;
+    @BindView(R.id.phone_field)
     TextInputEditText phone_field;
+    @BindView(R.id.user_name)
+    TextInputEditText name_field;
+    @BindView(R.id.loading_view)
+    LinearLayout loading_view;
     private FirebaseAuth mAuth;
     private String TAG = "register_activity";
     private String email,password,phone;
@@ -47,15 +60,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        ButterKnife.bind(this);
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        //initialize views
-        signup_btn = findViewById(R.id.signup_btn);
-        login_link = findViewById(R.id.login_link);
-        email_field = findViewById(R.id.email_field);
-        password_field = findViewById(R.id.password_field);
-        confirm_password_field = findViewById(R.id.confirm_password_field);
-        phone_field = findViewById(R.id.phone_field);
+
 
         //set transparency for some views
         signup_btn.setAlpha(0.7f);
@@ -78,6 +86,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public  void signUp(String email, String password){
+        showLoader();
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -89,23 +98,25 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                             if(user != null){
                                 String uid = user.getUid();
-                                String userName = user.getDisplayName();
+                                String userName = name_field.getText().toString();
                                 String email = user.getEmail();
                                 //String photo = user.getPhotoUrl().toString();
                                 String phone = phone_field.getText().toString();
                                // System.out.println(TAG + " " + photo);
                                 mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
                                 HashMap<String,String> userMap = new HashMap<>();
-                                userMap.put("user_name", userName);
+                                userMap.put("name", userName);
                                 userMap.put("email", email);
                                 userMap.put("phone", phone);
-                                userMap.put("profile_image", "");
+                                userMap.put("about", "");
+                                userMap.put("image", "");
                                 mDatabaseReference.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if(task.isSuccessful()){
                                             Toasty.success(getApplicationContext(),getString(R.string.user_registration_successful),Toast.LENGTH_SHORT).show();
                                             updateUI(user);
+
                                         }
                                     }
                                 });
@@ -114,6 +125,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                         } else {
                             // If sign in fails, display a message to the user.
+                            hideLoader();
                             try {
                                 throw task.getException();
                             } catch(FirebaseAuthWeakPasswordException e) {
@@ -155,6 +167,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     public void updateUI(FirebaseUser currentUser){
         if(currentUser != null){
+            WelcomeActivity.logged_in_user.setUid(currentUser.getUid());
+//            WelcomeActivity.logged_in_user.setEmail(currentUser.getEmail());
+//            WelcomeActivity.logged_in_user.setName(currentUser.getDisplayName());
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.fadein, R.anim.fadeout);
@@ -181,10 +196,25 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
+    public void showLoader(){
+        loading_view.setVisibility(View.VISIBLE);
+        signup_btn.setVisibility(View.GONE);
+        login_link.setVisibility(View.GONE);
+    }
+
+    public void hideLoader(){
+        loading_view.setVisibility(View.GONE);
+        signup_btn.setVisibility(View.VISIBLE);
+        login_link.setVisibility(View.VISIBLE);
+    }
     public boolean validated(){
         boolean valid = true;
         //make sure required fields are not empty
-        if(email_field.getText().toString().isEmpty()) {
+        if(name_field.getText().toString().isEmpty()) {
+            name_field.setError(getString(R.string.name_empty_error));
+            Toasty.error(RegisterActivity.this,getString(R.string.name_empty_error),Toast.LENGTH_SHORT).show();
+            valid = false;
+        } else if(email_field.getText().toString().isEmpty()) {
             email_field.setError(getString(R.string.email_empty_error));
             Toasty.error(RegisterActivity.this,getString(R.string.email_empty_error),Toast.LENGTH_SHORT).show();
             valid = false;
