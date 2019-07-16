@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.stepstone.stepper.StepperLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/stepperLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:ms_showBackButtonOnFirstStep="true"
+    app:ms_backButtonColor="@color/colorPrimary"
+    app:ms_nextButtonColor="@color/colorOrange"
+    app:ms_completeButtonColor="@color/colorGray"
+    app:ms_stepperType="tabs" />

@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tr.makina.guvencapp">
+    package="com.tr.guvencmakina.guvencapp">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -9,9 +16,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
         <activity
-            android:name=".Welcome.ui.WelcomeActivity"
+            android:name="com.tr.guvencmakina.guvencapp.Welcome.ui.WelcomeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -21,21 +36,41 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Auth.UI.RegisterActivity"
+            android:name="com.tr.guvencmakina.guvencapp.Auth.UI.RegisterActivity"
             android:label="@string/title_activity_register"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Auth.UI.LoginActivity"
+            android:name="com.tr.guvencmakina.guvencapp.Auth.UI.LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Dashboard.ui.MainActivity"
+            android:name="com.tr.guvencmakina.guvencapp.Dashboard.ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".Settings.SettingsActivity"
+            android:name="com.tr.guvencmakina.guvencapp.Settings.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:theme="@style/AppTheme.SubTheme"></activity>
+        <activity
+            android:name="com.tr.guvencmakina.guvencapp.Products.ui.activities.ProductsStepperActivity"
+            android:label="@string/add_product"
+            android:theme="@style/AppTheme.SubTheme"></activity>
+        <activity
+            android:name="com.tr.guvencmakina.guvencapp.Products.ui.activities.ProductCategoryStepperActivity"
+            android:label="@string/add_category"
+            android:theme="@style/AppTheme.SubTheme"></activity>
+        <activity
+            android:name=".Products.ui.activities.AddProductCategoryImage"
+            android:label="@string/add_category_image"
+            android:theme="@style/AppTheme.SubTheme"></activity>
+        <activity
+            android:name=".Products.ui.activities.AddProductCategoryName"
+            android:label="@string/add_category_name"
+            android:theme="@style/AppTheme.SubTheme"></activity>
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 
 </manifest>
