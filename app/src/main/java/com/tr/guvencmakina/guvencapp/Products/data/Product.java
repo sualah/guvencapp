@@ -1,21 +1,24 @@
 package com.tr.guvencmakina.guvencapp.Products.data;
 
+import com.google.common.base.Objects;
+
 public class Product {
     String uid;
     String name;
+    String image;
     String price;
     String capacity;
-    String performance;
-    String construction;
     String material;
     String safety;
     String design;
-    String usefulness;
-    String lifting_system;
+    String uses;
     String width;
     String length;
     String weight;
-    int rating;
+    String other_details;
+    String category;
+    String location;
+    String performance;
 
     public Product() {
     }
@@ -52,22 +55,6 @@ public class Product {
         this.capacity = capacity;
     }
 
-    public String getPerformance() {
-        return performance;
-    }
-
-    public void setPerformance(String performance) {
-        this.performance = performance;
-    }
-
-    public String getConstruction() {
-        return construction;
-    }
-
-    public void setConstruction(String construction) {
-        this.construction = construction;
-    }
-
     public String getMaterial() {
         return material;
     }
@@ -92,21 +79,7 @@ public class Product {
         this.design = design;
     }
 
-    public String getUsefulness() {
-        return usefulness;
-    }
 
-    public void setUsefulness(String usefulness) {
-        this.usefulness = usefulness;
-    }
-
-    public String getLifting_system() {
-        return lifting_system;
-    }
-
-    public void setLifting_system(String lifting_system) {
-        this.lifting_system = lifting_system;
-    }
 
     public String getWidth() {
         return width;
@@ -132,11 +105,84 @@ public class Product {
         this.weight = weight;
     }
 
-    public int getRating() {
-        return rating;
+    public String getUses() {
+        return uses;
     }
 
-    public void setRating(int rating) {
-        this.rating = rating;
+    public void setUses(String uses) {
+        this.uses = uses;
+    }
+
+    public String getOther_details() {
+        return other_details;
+    }
+
+    public void setOther_details(String other_details) {
+        this.other_details = other_details;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getPerformance() {
+        return performance;
+    }
+
+    public void setPerformance(String performance) {
+        this.performance = performance;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product)) return false;
+        Product product = (Product) o;
+        return Objects.equal(getName(), product.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getName());
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "uid='" + uid + '\'' +
+                ", name='" + name + '\'' +
+                ", image='" + image + '\'' +
+                ", price='" + price + '\'' +
+                ", capacity='" + capacity + '\'' +
+                ", material='" + material + '\'' +
+                ", safety='" + safety + '\'' +
+                ", design='" + design + '\'' +
+                ", uses='" + uses + '\'' +
+                ", width='" + width + '\'' +
+                ", length='" + length + '\'' +
+                ", weight='" + weight + '\'' +
+                ", other_details='" + other_details + '\'' +
+                ", category='" + category + '\'' +
+                '}';
     }
 }

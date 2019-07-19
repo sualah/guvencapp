@@ -38,7 +38,7 @@ LottieAnimationView lottieAnimationView;
         // Initialize Firebase Auth
          mAuth = FirebaseAuth.getInstance();
         //firebase offline
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
          signup_btn.setAlpha(0.7f);
          login_btn.setAlpha(0.7f);
          login_btn.setOnClickListener(this);

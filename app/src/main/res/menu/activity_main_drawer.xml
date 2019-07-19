@@ -7,19 +7,15 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home_red_400_24dp"
-            android:title="@string/menu_home" />
+            android:title="@string/dashboard" />
         <item
-            android:id="@+id/profile"
-            android:icon="@drawable/ic_person_red_400_24dp"
-            android:title="@string/profile" />
+            android:id="@+id/all_products"
+            android:icon="@drawable/ic_all_inclusive_red_400_24dp"
+            android:title="@string/all_products" />
         <item
             android:id="@+id/help"
             android:icon="@drawable/ic_help_red_400_24dp"
             android:title="@string/help" />
-        <item
-            android:id="@+id/action_settings"
-            android:icon="@drawable/ic_settings_red_400_24dp"
-            android:title="@string/action_settings" />
         <item
             android:id="@+id/log_out"
             android:icon="@drawable/ic_lock_open_red_400_24dp"

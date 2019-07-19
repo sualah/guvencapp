@@ -1,59 +1,61 @@
 package com.tr.guvencmakina.guvencapp.Dashboard.ui;
 
+import android.Manifest;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
-
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-
-import android.util.Log;
-import android.view.View;
-
-import androidx.core.view.GravityCompat;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-
-import android.view.MenuItem;
-
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.tr.guvencmakina.guvencapp.Auth.Data.User;
 import com.tr.guvencmakina.guvencapp.Auth.UI.LoginActivity;
 import com.tr.guvencmakina.guvencapp.Dashboard.adapter.ProductsCategoryCardViewAdapter;
+import com.tr.guvencmakina.guvencapp.Products.data.Product;
 import com.tr.guvencmakina.guvencapp.Products.data.ProductCategory;
-import com.tr.guvencmakina.guvencapp.Products.ui.activities.AddProductCategoryImage;
-import com.tr.guvencmakina.guvencapp.Products.ui.activities.ProductCategoryStepperActivity;
-import com.tr.guvencmakina.guvencapp.Products.ui.activities.ProductsStepperActivity;
+import com.tr.guvencmakina.guvencapp.Products.ui.activities.AddProductCategoryName;
+import com.tr.guvencmakina.guvencapp.Products.ui.activities.AddProductDetailsActivity;
+import com.tr.guvencmakina.guvencapp.Products.ui.activities.AllProductsActivity;
+import com.tr.guvencmakina.guvencapp.Products.ui.activities.ProductsActivity;
 import com.tr.guvencmakina.guvencapp.R;
-import com.tr.guvencmakina.guvencapp.Settings.SettingsActivity;
+import com.tr.guvencmakina.guvencapp.Utils.UiHelper;
 import com.tr.guvencmakina.guvencapp.Welcome.ui.WelcomeActivity;
-
-import androidx.drawerlayout.widget.DrawerLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.Menu;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private String TAG = "main_activity";
@@ -67,7 +69,12 @@ public class MainActivity extends AppCompatActivity
     FloatingActionButton add_category_btn;
     @BindView(R.id.add_product)
     FloatingActionButton add_product_btn;
+    @BindView(R.id.parentShimmerLayout)
+    ShimmerFrameLayout shimmer_l;
     List<ProductCategory> productCategories = new ArrayList<>();
+    public static List<Product> products = new ArrayList<>();
+    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+    public static List<String> product_category_names = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,17 +83,28 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
         productsCategoryCardViewAdapter = new ProductsCategoryCardViewAdapter(this);
+//        if (mDatabaseReference == null) {
+//            FirebaseDatabase database = FirebaseDatabase.getInstance();
+//            database.setPersistenceEnabled(true);
+//            mDatabaseReference = database.getReference();
+//        }
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
      //   recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(productsCategoryCardViewAdapter);
 
+        productsCategoryCardViewAdapter.setOnClickListener((view,position)->{
+            TextView  name = view.findViewById(R.id.product_name);
+            shimmer_l.setVisibility(View.VISIBLE);
+            shimmer_l.startShimmerAnimation();
+            getProductsListner(name.getText().toString());
+        });
 
         add_category_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddProductCategoryImage.class);
+                Intent intent = new Intent(MainActivity.this, AddProductCategoryName.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fadein, R.anim.fadeout);
             }
@@ -95,33 +113,11 @@ public class MainActivity extends AppCompatActivity
         add_product_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ProductsStepperActivity.class);
+                Intent intent = new Intent(MainActivity.this, AddProductDetailsActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fadein, R.anim.fadeout);
             }
         });
-
-//        productCategories.add(new ProductCategory("Garbage Truck",R.drawable.garbage_truck));
-//        productCategories.add(new ProductCategory("Dump",R.drawable.dump));
-//        productCategories.add(new ProductCategory("Fire Department",R.drawable.fire_department));
-//        productCategories.add(new ProductCategory("Remove",R.drawable.remove));
-//        productCategories.add(new ProductCategory("Mobile Workshop",R.drawable.mobile_workshop));
-//        productCategories.add(new ProductCategory("Platform with Basket",R.drawable.platform_with_basket));
-//        productCategories.add(new ProductCategory("Vacuum Road Sweeper",R.drawable.vacuum_road_sweeper));
-//        productCategories.add(new ProductCategory("Garbage Container",R.drawable.garbage_container));
-//        productCategories.add(new ProductCategory("Semi Trailer Garbage Transfer",R.drawable.semi_trailer_garbage_transfer));
-//        productCategories.add(new ProductCategory("Combined Grooving",R.drawable.combined_grooving));
-//        productCategories.add(new ProductCategory("Cesspool",R.drawable.cesspool));
-//        productCategories.add(new ProductCategory("Minipak Trash",R.drawable.minipak_trash));
-//        productCategories.add(new ProductCategory("Fuel Tanker",R.drawable.fuel_tanker));
-//        productCategories.add(new ProductCategory("Intermediate Transmission Group",R.drawable.intermediate_transmission_group));
-//        productCategories.add(new ProductCategory("PTO Gearbox",R.drawable.pto_gearbox));
-//        productCategories.add(new ProductCategory("Hydraulic Pump",R.drawable.hydraulic_pump));
-//        productCategories.add(new ProductCategory("Vacuum Pump",R.drawable.vacuum_pump));
-//        productCategories.add(new ProductCategory("Directional Valves",R.drawable.directional_valves));
-//        productCategories.add(new ProductCategory("Hydraulic Cylinder",R.drawable.hydraulic_cylinder));
-
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -132,7 +128,7 @@ public class MainActivity extends AppCompatActivity
 
         // get & set nav_header_view views
         View nav_header_view = navigationView.getHeaderView(0);
-        CircleImageView user_image_view= nav_header_view.findViewById(R.id.user_image_view);
+        ImageView user_image_view= nav_header_view.findViewById(R.id.user_image_view);
         TextView user_name_tv = nav_header_view.findViewById(R.id.user_name_tv);
         TextView user_email_tv = nav_header_view.findViewById(R.id.email_tv);
         LinearLayout header_loader = nav_header_view.findViewById(R.id.loading_view);
@@ -158,6 +154,13 @@ public class MainActivity extends AppCompatActivity
                         user_image_view.setVisibility(View.VISIBLE);
                         user_name_tv.setText("Hi, " + user_value.getName());
                         user_email_tv.setText(user_value.getEmail());
+
+                        UiHelper.USERTYPE = user_value.getType();
+                        if(user_value.getType().equalsIgnoreCase("admin")){
+                            add_menu.setVisibility(View.VISIBLE);
+                        } else {
+                            add_menu.setVisibility(View.GONE);
+                        }
                     //    user_image_view.setImageResource(R.drawable.flag_burkina_faso);
 
                         Log.d(TAG, "Value is: " + user_value.toString());
@@ -174,6 +177,7 @@ public class MainActivity extends AppCompatActivity
             });
 
         }
+        shimmer_l.startShimmerAnimation();
         getCategoryListiner();
 
     }
@@ -185,13 +189,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void getCategoryListiner(){
-        System.out.println("getCategoryListiner");
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("product_categories");
+        databaseReference.keepSynced(true);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshots) {
-                System.out.println("getCategoryListiner dataSnapshots.exists() " + dataSnapshots.exists());
-
                 productCategories = new ArrayList<>();
                 for (DataSnapshot dataSnapshot: dataSnapshots.getChildren()) {
                     // TODO: handle the post
@@ -199,13 +201,53 @@ public class MainActivity extends AppCompatActivity
                     ProductCategory productCategory = dataSnapshot.getValue(ProductCategory.class);
                     productCategory.setUid(productCategoryKey);
                     System.out.println("Added category " + productCategory.toString());
+                    product_category_names.add(productCategory.getName());
                     if(!productCategories.contains(productCategory)){
                         productCategories.add(productCategory);
                     }
                 }
-
                 productsCategoryCardViewAdapter.update(productCategories);
-                productsCategoryCardViewAdapter.notifyDataSetChanged();
+               // productsCategoryCardViewAdapter.notifyDataSetChanged();
+                shimmer_l.stopShimmerAnimation();
+                shimmer_l.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+           //     databaseReference.removeEventListener(null);
+                Log.w(TAG, "productCategories:onCancelled", databaseError.toException());
+            }
+        });
+
+    }
+
+    public void getProductsListner(String category){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("products");
+        Query query = databaseReference.orderByChild("category").equalTo(category);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshots) {
+                products = new ArrayList<>();
+                for (DataSnapshot dataSnapshot: dataSnapshots.getChildren()) {
+                    // TODO: handle the post
+                    String productCategoryKey = dataSnapshot.getKey();
+                    Product product = dataSnapshot.getValue(Product.class);
+                   // product.setUid(productCategoryKey);
+               //     System.out.println("Added product " + product.toString());
+                    products.add(product);
+                }
+
+                shimmer_l.stopShimmerAnimation();
+                shimmer_l.setVisibility(View.GONE);
+                if(products.size() > 0){
+                    Intent intent = new Intent(MainActivity.this, ProductsActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                } else {
+                    Toasty.info(getApplicationContext(),"Sorry " + category + " has no products.").show();
+                }
+
             }
 
             @Override
@@ -218,6 +260,37 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+    public void searchProductCategories(String queryText){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("product_categories");
+        Query query = databaseReference.orderByKey().equalTo(queryText);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshots) {
+                List<ProductCategory> categories = new ArrayList<>();
+                for (DataSnapshot dataSnapshot: dataSnapshots.getChildren()) {
+                    // TODO: handle the post
+                    String productCategoryKey = dataSnapshot.getKey();
+                    ProductCategory productCategory = dataSnapshot.getValue(ProductCategory.class);
+                    productCategory.setUid(productCategoryKey);
+                    categories.add(productCategory);
+                }
+                productsCategoryCardViewAdapter.update(categories);
+                // productsCategoryCardViewAdapter.notifyDataSetChanged();
+                shimmer_l.stopShimmerAnimation();
+                shimmer_l.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "productCategories:onCancelled", databaseError.toException());
+            }
+        });
+
+
+
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -232,10 +305,56 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+      //  getMenuInflater().inflate(R.menu.main, menu);
+        // Inflate the options menu from XML
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setQueryHint("Search Product Categories");
+        searchView.setIconifiedByDefault(true); // Do not iconify the widget; expand it by default
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                System.out.println("search query " + query);
+               // productsCategoryCardViewAdapter.getFilter().filter(query);
+                ArrayList<ProductCategory> newList=new ArrayList<>();
+                for (ProductCategory p : productCategories){
+                    System.out.println("ProductCategory " + p.toString());
+                    String name = p.getUid().toLowerCase();
+                      if (name.contains(query.toLowerCase())){
+                        newList.add(p);
+                    }
+                }
+                productsCategoryCardViewAdapter.update(newList);
+             //   searchProductCategories(query);
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //productsCategoryCardViewAdapter.getFilter().filter(newText);
+                System.out.println("search query " + newText);
+             //   searchProductCategories(newText);
+                ArrayList<ProductCategory> newList=new ArrayList<>();
+                for (ProductCategory p : productCategories){
+                    System.out.println("ProductCategory " + p.toString());
+                    String name = p.getUid().toLowerCase();
+                    System.out.println(" p.getUid() " + p.getUid());
+                    if (name.contains(newText.toLowerCase())){
+                        newList.add(p);
+                    }
+                }
+                productsCategoryCardViewAdapter.update(newList);
+                return false;
+            }
+        });
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -243,9 +362,6 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -257,7 +373,6 @@ public class MainActivity extends AppCompatActivity
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -265,15 +380,20 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             // Handle the camera action
-        } else if (id == R.id.profile) {
-
-        } else if (id == R.id.help) {
-
-        } else if (id == R.id.action_settings) {
-            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+        } else if (id == R.id.all_products) {
+            Intent intent = new Intent(MainActivity.this, AllProductsActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-        } else if (id == R.id.log_out) {
+        } else if (id == R.id.help) {
+//            Intent callIntent = new Intent(Intent.ACTION_CALL);
+//            callIntent.setData(Uri.parse("tel:0377778888"));
+//
+//            if (ActivityCompat.checkSelfPermission(MainActivity.this,
+//                    Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+//                return;
+//            }
+//            startActivity(callIntent);
+        }  else if (id == R.id.log_out) {
             logOut();
         }
 

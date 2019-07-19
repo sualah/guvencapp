@@ -64,7 +64,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-
+        if (mDatabaseReference == null) {
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            database.setPersistenceEnabled(true);
+            mDatabaseReference = database.getReference();
+        }
         //set transparency for some views
         signup_btn.setAlpha(0.7f);
         login_link.setAlpha(0.7f);

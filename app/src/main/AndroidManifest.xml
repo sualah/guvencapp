@@ -5,9 +5,14 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -16,6 +21,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -45,8 +57,14 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.tr.guvencmakina.guvencapp.Dashboard.ui.MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:label="@string/dashboard"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
         <activity
             android:name="com.tr.guvencmakina.guvencapp.Settings.SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -66,6 +84,42 @@
         <activity
             android:name=".Products.ui.activities.AddProductCategoryName"
             android:label="@string/add_category_name"
+            android:theme="@style/AppTheme.SubTheme"></activity>
+        <activity
+            android:name=".Products.ui.activities.AddProductDetailsActivity"
+            android:label="@string/add_product_details"
+            android:theme="@style/AppTheme.SubTheme"></activity>
+        <activity
+            android:name=".Products.ui.activities.AddProductImage"
+            android:label="@string/add_product_image"
+            android:theme="@style/AppTheme.SubTheme"></activity>
+        <activity
+            android:name=".Products.ui.activities.ProductsActivity"
+            android:label="@string/products"
+            android:theme="@style/AppTheme.SubTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
+        <activity
+            android:name=".Products.ui.activities.AllProductsActivity"
+            android:label="@string/all_products"
+            android:theme="@style/AppTheme.SubTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
+        </activity>
+        <activity
+            android:name=".Products.ui.activities.ProductDetailsActivity"
+            android:label="@string/product_details"
+            android:theme="@style/AppTheme.SubTheme"></activity>
+        <activity
+            android:name=".Products.ui.activities.ProductLocationMapActivity"
+            android:label="@string/product_location"
             android:theme="@style/AppTheme.SubTheme"></activity>
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"

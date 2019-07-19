@@ -62,19 +62,7 @@
         android:background="@color/colorLightGray"
         android:orientation="horizontal">
         <TextView
-            android:id="@+id/back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="20sp"
-            android:gravity="left"
-            android:layout_margin="10dp"
-            android:drawablePadding="5dp"
-            android:textColor="@color/colorPrimary"
-            android:drawableLeft="@drawable/ic_keyboard_arrow_left_red_400_24dp"
-            android:text="@string/ms_back"/>
-        <TextView
-            android:id="@+id/save"
+            android:id="@+id/next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -84,6 +72,7 @@
             android:drawablePadding="5dp"
             android:textColor="@color/colorPrimary"
             android:drawableRight="@drawable/ic_keyboard_arrow_right_red_400_24dp"
-            android:text="@string/SAVE"/>
+            android:text="@string/ms_next"/>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

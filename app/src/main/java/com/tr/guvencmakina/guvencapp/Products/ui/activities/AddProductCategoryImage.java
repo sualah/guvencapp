@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tr.guvencmakina.guvencapp.BuildConfig;
 import com.tr.guvencmakina.guvencapp.Dashboard.ui.MainActivity;
 import com.tr.guvencmakina.guvencapp.Enums.ImagePickerEnum;
@@ -35,9 +47,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import es.dmoral.toasty.Toasty;
 
 import static com.tr.guvencmakina.guvencapp.Utils.UiHelper.CAMERA_STORAGE_REQUEST_CODE;
 import static com.tr.guvencmakina.guvencapp.Utils.UiHelper.ONLY_CAMERA_REQUEST_CODE;
@@ -57,8 +71,17 @@ public class AddProductCategoryImage extends AppCompatActivity implements IImage
     LinearLayout add_img_ll;
     @BindView(R.id.image_view)
     ImageView image_view;
-    @BindView(R.id.next)
-    TextView next;
+    @BindView(R.id.loading_view)
+    LinearLayout loading_view;
+    @BindView(R.id.back)
+    TextView back;
+    @BindView(R.id.save)
+    TextView save;
+    private FirebaseAuth mAuth;
+    DatabaseReference mDatabaseReference;
+    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+    boolean image_selected = false;
+    Uri image_uri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,13 +89,25 @@ public class AddProductCategoryImage extends AppCompatActivity implements IImage
         ButterKnife.bind(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mAuth = FirebaseAuth.getInstance();
         add_img_ll.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                 if (uiHelper.checkSelfPermissions(this))
                     uiHelper.showImagePickerDialog(this, this);
         });
 
-        next.setOnClickListener(new View.OnClickListener() {
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+             if(image_selected && image_uri != null){
+                 uploadImageFile(image_uri);
+             } else {
+                 Toasty.error(getApplicationContext(),"Please select an image.").show();
+             }
+//
+            }
+        });
+        back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), AddProductCategoryName.class);
@@ -80,12 +115,12 @@ public class AddProductCategoryImage extends AppCompatActivity implements IImage
                 overridePendingTransition(R.anim.fadein, R.anim.fadeout);
             }
         });
-
     }
+
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), AddProductCategoryName.class);
         startActivity(intent);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
@@ -99,7 +134,7 @@ public class AddProductCategoryImage extends AppCompatActivity implements IImage
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), AddProductCategoryName.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 break;
@@ -148,9 +183,15 @@ public class AddProductCategoryImage extends AppCompatActivity implements IImage
             Uri uri = Uri.parse(currentPhotoPath);
             openCropActivity(uri, uri);
         } else if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
+
             if (data != null) {
                 Uri uri = UCrop.getOutput(data);
+                image_uri = UCrop.getOutput(data);
+                image_selected = true;
+                uploadImageFile(uri);
                 showImage(uri);
+            } else {
+                Toasty.error(getApplicationContext(),"Please select another image.").show();
             }
         } else if (requestCode == PICK_IMAGE_GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             try {
@@ -256,5 +297,95 @@ public class AddProductCategoryImage extends AppCompatActivity implements IImage
                 .withMaxResultSize(150, 150)
                 .withAspectRatio(5f, 5f)
                 .start(this);
+    }
+
+public void saveCategory(String image_url){
+    if(!AddProductCategoryName.categoryName.isEmpty()){
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("product_categories").child(AddProductCategoryName.categoryName);
+        HashMap<String,String> userMap = new HashMap<>();
+        userMap.put("name", AddProductCategoryName.categoryName);
+        userMap.put("image", image_url );
+        mDatabaseReference.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Toasty.success(getApplicationContext(),getString(R.string.category_added_successful), Toast.LENGTH_SHORT).show();
+                    hideLoader();
+                    //   getCategoryListiner(mDatabaseReference);
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                } else {
+                    System.out.println("adding category failed " + task.getException().getMessage());
+                    Toasty.error(getApplicationContext(),getString(R.string.category_addition_failure),Toast.LENGTH_SHORT).show();
+                    hideLoader();
+                }
+            }
+        });
+
+    }
+
+}
+
+    public void uploadImageFile(Uri fileUri){
+        //Uri fileUri = Uri.fromFile(file);
+        //  Uri file = Uri.fromFile(new File("path/to/images/rivers.jpg"));
+        showLoader();
+        StorageReference riversRef = storageReference.child("product_category_images/" + AddProductCategoryName.categoryName + ".jpg");
+        UploadTask uploadTask  = riversRef.putFile(fileUri);
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task){
+                if (!task.isSuccessful()) {
+                 //   throw task.getException();
+                    System.out.println(task.getException());
+                    hideLoader();
+                    Toasty.error(getApplicationContext(),"Image failed to upload.").show();
+
+                }
+                // Continue with the task to get the download URL
+                return riversRef.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    System.out.println("image_url " + downloadUri.toString());
+                    Toasty.success(getApplicationContext(),"Image uploaded successful").show();
+                    saveCategory(downloadUri.toString());
+                } else {
+                    // Handle failures
+                    hideLoader();
+                   Toasty.error(getApplicationContext(),"Image failed to upload.").show();
+                }
+            }
+        });
+//                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                    @Override
+//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                        // Get a URL to the uploaded content
+//                        Uri downloadUrl = taskSnapshot.getUploadSessionUri();
+//
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception exception) {
+//                        // Handle unsuccessful uploads
+//                        hideLoader();
+//                        Toasty.error(getApplicationContext(),"Image failed to upload.").show();
+//                    }
+//                });
+    }
+
+    public void showLoader(){
+        loading_view.setVisibility(View.VISIBLE);
+        add_img_ll.setVisibility(View.GONE);
+    }
+
+    public void hideLoader(){
+        loading_view.setVisibility(View.GONE);
+        add_img_ll.setVisibility(View.VISIBLE);
     }
 }

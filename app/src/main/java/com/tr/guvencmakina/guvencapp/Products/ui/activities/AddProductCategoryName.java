@@ -25,6 +25,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +35,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.tr.guvencmakina.guvencapp.BuildConfig;
 import com.tr.guvencmakina.guvencapp.Dashboard.ui.MainActivity;
 import com.tr.guvencmakina.guvencapp.Enums.ImagePickerEnum;
@@ -60,91 +65,46 @@ import static com.tr.guvencmakina.guvencapp.Utils.UiHelper.ONLY_STORAGE_REQUEST_
 
 public class AddProductCategoryName extends AppCompatActivity{
 
-    private static final int CAMERA_ACTION_PICK_REQUEST_CODE = 610;
-    private static final int PICK_IMAGE_GALLERY_REQUEST_CODE = 609;
     private static final String TAG = "AddProductCategoryName";
-    //    public static final int CAMERA_STORAGE_REQUEST_CODE = 611;
-//    public static final int ONLY_CAMERA_REQUEST_CODE = 612;
-//    public static final int ONLY_STORAGE_REQUEST_CODE = 613;
-    private String currentPhotoPath = "";
-    private UiHelper uiHelper = new UiHelper();
-
     @BindView(R.id.add_name_ll)
     LinearLayout add_name_ll;
     @BindView(R.id.loading_view)
     LinearLayout loading_view;
     @BindView(R.id.category_name_field)
     TextInputEditText category_name_field;
-    @BindView(R.id.back)
-    TextView back;
-    @BindView(R.id.save)
-    TextView save;
-    private FirebaseAuth mAuth;
-    DatabaseReference mDatabaseReference;
+    @BindView(R.id.next)
+    TextView next;
+    static String categoryName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_product_category_name);
         ButterKnife.bind(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mAuth = FirebaseAuth.getInstance();
 
 
-        save.setOnClickListener(new View.OnClickListener() {
+        next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                showLoader();
-                String name = category_name_field.getText().toString();
-                if(!name.isEmpty()){
-                    mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("product_categories");
-                    HashMap<String,String> userMap = new HashMap<>();
-                    userMap.put("name", name);
-                    userMap.put("image", "");
-
-//                    String key = mDatabaseReference.child("posts").push().getKey();
-//                    Post post = new Post(userId, username, title, body);
-//                    Map<String, Object> postValues = post.toMap();
-//
-//                    Map<String, Object> childUpdates = new HashMap<>();
-//                    childUpdates.put("/posts/" + key, postValues);
-//                    childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
-                    mDatabaseReference.push().setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-                                Toasty.success(getApplicationContext(),getString(R.string.category_added_successful), Toast.LENGTH_SHORT).show();
-                                hideLoader();
-                             //   getCategoryListiner(mDatabaseReference);
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(intent);
-                                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-                            } else {
-                                System.out.println("adding category failed " + task.getException().getMessage());
-                                Toasty.error(getApplicationContext(),getString(R.string.category_addition_failure),Toast.LENGTH_SHORT).show();
-                                hideLoader();
-                            }
-                        }
-                    });
-
+                if(!category_name_field.getText().toString().isEmpty()){
+                    categoryName = category_name_field.getText().toString();
+                    Intent intent = new Intent(getApplicationContext(), AddProductCategoryImage.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 } else {
                     category_name_field.setError(getString(R.string.category_name_empty));
                     Toasty.error(AddProductCategoryName.this,getString(R.string.category_name_empty)).show();
+
                 }
 
-//
-            }
-        });
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), AddProductCategoryImage.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
             }
         });
 
-    }  public void showLoader(){
+
+    }
+    public void showLoader(){
         loading_view.setVisibility(View.VISIBLE);
         add_name_ll.setVisibility(View.GONE);
     }
@@ -208,7 +168,7 @@ public class AddProductCategoryName extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(getApplicationContext(), AddProductCategoryImage.class);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.fadein, R.anim.fadeout);
     }
@@ -222,7 +182,7 @@ public class AddProductCategoryName extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent intent = new Intent(getApplicationContext(), AddProductCategoryImage.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 break;

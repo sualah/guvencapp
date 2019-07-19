@@ -8,6 +8,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
     <string name="logout">Log Out</string>
+    <string name="google_maps_key">AIzaSyCWba98zpqIpI39KnegY-Thsz67VA_NPwc</string>
 
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
@@ -82,10 +83,30 @@
     <string name="save">Save</string>
     <string name="SAVE">SAVE</string>
     <string name="category_name_empty">Category name cannot be empty.</string>
+    <string name="product_name_empty">Product name cannot be empty.</string>
+    <string name="select_product_category">Please select product category.</string>
     <string name="add_category_name">Add Category Name</string>
     <string name="category_added_successful">Product category added successfully</string>
+    <string name="adding_product_success">Product added successfully</string>
     <string name="category_addition_failure">Adding new product category failed</string>
+    <string name="adding_product_failure">Adding new product failed</string>
     <string name="saving_wait">Saving please wait...</string>
+    <string name="enter_product_name">Enter product name</string>
+    <string name="enter_product_price">Enter product price</string>
+    <string name="enter_product_width">Product width</string>
+    <string name="enter_product_length">Product length</string>
+    <string name="enter_product_weight">Product weight</string>
+    <string name="enter_other_details">Enter other product details</string>
+    <string name="add_product_details">Add Product Details</string>
+    <string name="add_product_image">Add Product Image</string>
+    <string name="enter_product_material">Product material</string>
+    <string name="products">Products</string>
+    <string name="all_products">All Products</string>
+    <string name="product_details">Product Details</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="product_location">Product Location</string>
+    <string name="enter_product_capacity">Product capacity</string>
+    <string name="enter_product_performance">Performance</string>
     <string-array name="imagePicker">
         <item>From Gallery</item>
         <item>From Camera</item>
