@@ -61,6 +61,8 @@ public class AddProductDetailsActivity extends AppCompatActivity{
     TextInputEditText product_capacity_field;
     @BindView(R.id.product_location_field)
     TextInputEditText product_location_field;
+    @BindView(R.id.product_height_field)
+    TextInputEditText product_height_field;
     @BindView(R.id.product_safety_radio)
     RadioGroup product_safety_radio;
     @BindView(R.id.categories_spinner)
@@ -89,14 +91,14 @@ public class AddProductDetailsActivity extends AppCompatActivity{
                     product.setName(product_name_field.getText().toString());
                     product.setMaterial(product_material_field.getText().toString());
                     product.setPrice(product_price_field.getText().toString());
-                    product.setOther_details("");
+                    product.setOther_details(product_other_details_field.getText().toString());
                     product.setWidth(product_width_field.getText().toString());
                     product.setLength(product_length_field.getText().toString());
                     product.setWeight(product_weight_field.getText().toString());
                     product.setPerformance(product_performance_field.getText().toString());
                     product.setCapacity(product_capacity_field.getText().toString());
                     product.setLocation(product_location_field.getText().toString());
-                    product.setWeight(product_weight_field.getText().toString());
+                    product.setHeight(product_height_field.getText().toString());
                     product.setSafety(checkedRadio.getText().toString());
                     product.setCategory(categories_spinner.getSelectedItem().toString());
 

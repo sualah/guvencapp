@@ -304,6 +304,8 @@ public void saveProduct(String image_url){
         userMap.put("width", AddProductDetailsActivity.product.getWidth());
         userMap.put("length", AddProductDetailsActivity.product.getLength());
         userMap.put("weight", AddProductDetailsActivity.product.getWeight());
+        userMap.put("location", AddProductDetailsActivity.product.getLocation());
+        userMap.put("height", AddProductDetailsActivity.product.getHeight());
         userMap.put("performance", AddProductDetailsActivity.product.getPerformance());
         userMap.put("capacity", AddProductDetailsActivity.product.getCapacity());
         userMap.put("other_details", AddProductDetailsActivity.product.getOther_details());

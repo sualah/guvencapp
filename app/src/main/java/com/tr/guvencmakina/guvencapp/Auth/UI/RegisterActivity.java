@@ -138,9 +138,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                             } catch(FirebaseAuthUserCollisionException e) {
                                 Toasty.error(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
                             } catch(Exception e) {
-                                Log.e(TAG, e.getMessage());
-                                Log.w(TAG, "createUserWithEmail:failure", e.getCause());
-                                Toasty.error(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
+                              //  Log.e(TAG, e.getMessage());
+                              //  Log.w(TAG, "createUserWithEmail:failure", e.getCause());
+                              //  Toasty.error(getApplicationContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
                             }
                             updateUI(null);
                         }

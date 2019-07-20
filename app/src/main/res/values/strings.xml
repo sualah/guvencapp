@@ -96,7 +96,7 @@
     <string name="enter_product_width">Product width</string>
     <string name="enter_product_length">Product length</string>
     <string name="enter_product_weight">Product weight</string>
-    <string name="enter_other_details">Enter other product details</string>
+    <string name="enter_other_details">More product details.</string>
     <string name="add_product_details">Add Product Details</string>
     <string name="add_product_image">Add Product Image</string>
     <string name="enter_product_material">Product material</string>
@@ -108,6 +108,7 @@
     <string name="enter_product_capacity">Product capacity</string>
     <string name="enter_product_performance">Performance</string>
     <string name="enter_product_location">Location</string>
+    <string name="enter_product_height">Height</string>
     <string-array name="imagePicker">
         <item>From Gallery</item>
         <item>From Camera</item>

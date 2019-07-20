@@ -153,7 +153,6 @@ public class MainActivity extends AppCompatActivity
                         user_image_view.setVisibility(View.VISIBLE);
                         user_name_tv.setText("Hi, " + user_value.getName());
                         user_email_tv.setText(user_value.getEmail());
-
                         UiHelper.USERTYPE = user_value.getType();
                         if (user_value.getType().equalsIgnoreCase("admin")) {
                             add_menu.setVisibility(View.VISIBLE);
@@ -171,7 +170,7 @@ public class MainActivity extends AppCompatActivity
                 public void onCancelled(DatabaseError error) {
                     // Failed to read value
                     //   Log.w(TAG, "Failed to read value.", error.toException());
-                    Toasty.error(MainActivity.this, error.getMessage()).show();
+                   // Toasty.error(MainActivity.this, error.getMessage()).show();
                 }
             });
 
@@ -214,7 +213,7 @@ public class MainActivity extends AppCompatActivity
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
                 //     databaseReference.removeEventListener(null);
-                Log.w(TAG, "productCategories:onCancelled", databaseError.toException());
+               // Log.w(TAG, "productCategories:onCancelled", databaseError.toException());
             }
         });
 
@@ -252,7 +251,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
-                Log.w(TAG, "productCategories:onCancelled", databaseError.toException());
+              //  Log.w(TAG, "productCategories:onCancelled", databaseError.toException());
             }
         });
 

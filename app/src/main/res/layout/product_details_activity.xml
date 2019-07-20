@@ -191,15 +191,36 @@
                     android:textSize="15sp"
                     android:text="Width:"/>
                 <TextView
+                    android:id="@+id/product_height_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@id/product_width_tv"
+                    android:textSize="15sp"
+                    android:text="Height:"/>
+                <TextView
+                    android:id="@+id/product_other_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@color/colorGray"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/product_height_tv"
+                    android:textSize="15sp"
+                    android:text="More Details: "/>
+                <TextView
                     android:id="@+id/product_other_details_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:textColor="@color/colorPrimaryDark"
                     android:layout_alignParentLeft="true"
-                    android:layout_below="@id/product_width_tv"
+                    android:layout_below="@id/product_other_details"
                     android:textSize="15sp"
-                    android:text="Other Details: "/>
+                    android:text=" "/>
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
     </ScrollView>

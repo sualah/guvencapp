@@ -106,6 +106,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/product_height_field"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/enter_product_height"/>
+                </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/product_width_field"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -154,7 +163,7 @@
                         android:id="@+id/product_other_details_field"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:lines="5"
+                        android:lines="10"
                         android:inputType="textMultiLine"
                         android:hint="@string/enter_other_details"/>
                 </com.google.android.material.textfield.TextInputLayout>

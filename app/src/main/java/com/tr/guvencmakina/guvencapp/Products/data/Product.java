@@ -13,6 +13,7 @@ public class Product {
     String design;
     String uses;
     String width;
+    String height;
     String length;
     String weight;
     String other_details;
@@ -151,6 +152,14 @@ public class Product {
 
     public void setPerformance(String performance) {
         this.performance = performance;
+    }
+
+    public String getHeight() {
+        return height;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
     }
 
     @Override

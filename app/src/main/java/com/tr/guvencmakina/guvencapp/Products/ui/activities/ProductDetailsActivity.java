@@ -50,6 +50,8 @@ public class ProductDetailsActivity extends AppCompatActivity{
     TextView product_performance_tv;
     @BindView(R.id.product_capacity_tv)
     TextView product_capacity_tv;
+    @BindView(R.id.product_height_tv)
+    TextView product_height_tv;
     @BindView(R.id.product_image)
     ImageView product_image;
     String previous_activity = "";
@@ -75,18 +77,19 @@ public class ProductDetailsActivity extends AppCompatActivity{
 
 
         if(product != null){
-            product_name_tv.setText("Name:" + product.getName());
-            product_price_tv.setText("Price:" + product.getPrice());
-            product_material_tv.setText("Material:" + product.getMaterial());
-            product_weight_tv.setText("Weight:" + product.getWeight());
-            product_length_tv.setText("Length:" + product.getLength());
-            product_width_tv.setText("Width:" + product.getWidth());
-            product_category_tv.setText("Category:" + product.getCategory());
-            product_other_details_tv.setText("Other Details:" + product.getOther_details());
-            product_safety_tv.setText("Safety:" + product.getSafety());
-            location_tv.setText("Location:" + product.getLocation());
-            product_performance_tv.setText("Performance:" + product.getPerformance());
-            product_capacity_tv.setText("Capacity:" + product.getCapacity());
+            product_name_tv.setText("Name: " + product.getName());
+            product_price_tv.setText("Price: " + product.getPrice());
+            product_material_tv.setText("Material: " + product.getMaterial());
+            product_weight_tv.setText("Weight: " + product.getWeight());
+            product_length_tv.setText("Length: " + product.getLength());
+            product_width_tv.setText("Width: " + product.getWidth());
+            product_height_tv.setText("Height: " + product.getHeight());
+            product_category_tv.setText("Category: " + product.getCategory());
+            product_other_details_tv.setText(product.getOther_details());
+            product_safety_tv.setText("Safety: " + product.getSafety());
+            location_tv.setText("Location: " + product.getLocation());
+            product_performance_tv.setText("Performance: " + product.getPerformance());
+            product_capacity_tv.setText("Capacity: " + product.getCapacity());
 
             Picasso.get().load(product.getImage()).placeholder(R.drawable.ic_image_grey_700_24dp)
                     .error(R.drawable.ic_error_outline_black_24dp).into(product_image);
