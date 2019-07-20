@@ -59,13 +59,14 @@ public class AddProductDetailsActivity extends AppCompatActivity{
     TextInputEditText product_performance_field;
     @BindView(R.id.product_capacity_field)
     TextInputEditText product_capacity_field;
+    @BindView(R.id.product_location_field)
+    TextInputEditText product_location_field;
     @BindView(R.id.product_safety_radio)
     RadioGroup product_safety_radio;
     @BindView(R.id.categories_spinner)
     Spinner categories_spinner;
     @BindView(R.id.next)
     TextView next;
-    static String categoryName;
     static Product product;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +74,6 @@ public class AddProductDetailsActivity extends AppCompatActivity{
         setContentView(R.layout.add_product_details);
         ButterKnife.bind(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
         List<String> categories_list = new ArrayList<>();
         categories_list.add(0,"SELECT PRODUCT CATEGORY");
         categories_list.addAll(MainActivity.product_category_names);
@@ -96,6 +95,7 @@ public class AddProductDetailsActivity extends AppCompatActivity{
                     product.setWeight(product_weight_field.getText().toString());
                     product.setPerformance(product_performance_field.getText().toString());
                     product.setCapacity(product_capacity_field.getText().toString());
+                    product.setLocation(product_location_field.getText().toString());
                     product.setWeight(product_weight_field.getText().toString());
                     product.setSafety(checkedRadio.getText().toString());
                     product.setCategory(categories_spinner.getSelectedItem().toString());

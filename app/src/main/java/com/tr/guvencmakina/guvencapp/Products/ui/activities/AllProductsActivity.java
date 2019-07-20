@@ -44,6 +44,7 @@ public class AllProductsActivity extends AppCompatActivity{
     ProductsCardViewAdapter productsCardViewAdapter;
     public static Product product;
     List<Product> products = new ArrayList<>();
+    DatabaseReference databaseReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +58,8 @@ public class AllProductsActivity extends AppCompatActivity{
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(productsCardViewAdapter);
 
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.keepSynced(true);
         productsCardViewAdapter.setOnClickListener((view,position)->{
             TextView  nameTv = view.findViewById(R.id.product_name);
             for (Product p: products){
@@ -75,8 +78,8 @@ getAllProductsListiner();
 
     public void getAllProductsListiner(){
         shimmer_l.startShimmerAnimation();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("products");
-        databaseReference.addValueEventListener(new ValueEventListener() {
+      //  DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("products");
+        databaseReference.child("products").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshots) {
                 products = new ArrayList<>();

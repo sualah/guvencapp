@@ -2,7 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
@@ -14,13 +13,12 @@
             android:title="@string/all_products" />
         <item
             android:id="@+id/help"
-            android:icon="@drawable/ic_help_red_400_24dp"
+            android:icon="@drawable/ic_call_red_400_24dp"
             android:title="@string/help" />
         <item
             android:id="@+id/log_out"
             android:icon="@drawable/ic_lock_open_red_400_24dp"
             android:title="@string/logout" />
-
     </group>
 
 

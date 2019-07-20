@@ -55,7 +55,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private FirebaseAuth mAuth;
     private String TAG = "register_activity";
     private String email,password,phone;
-    DatabaseReference mDatabaseReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,11 +63,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        if (mDatabaseReference == null) {
-            FirebaseDatabase database = FirebaseDatabase.getInstance();
-            database.setPersistenceEnabled(true);
-            mDatabaseReference = database.getReference();
-        }
         //set transparency for some views
         signup_btn.setAlpha(0.7f);
         login_link.setAlpha(0.7f);
@@ -107,7 +101,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 //String photo = user.getPhotoUrl().toString();
                                 String phone = phone_field.getText().toString();
                                // System.out.println(TAG + " " + photo);
-                                mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
+                                DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
                                 HashMap<String,String> userMap = new HashMap<>();
                                 userMap.put("name", userName);
                                 userMap.put("email", email);

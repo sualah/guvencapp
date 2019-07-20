@@ -107,6 +107,7 @@
     <string name="product_location">Product Location</string>
     <string name="enter_product_capacity">Product capacity</string>
     <string name="enter_product_performance">Performance</string>
+    <string name="enter_product_location">Location</string>
     <string-array name="imagePicker">
         <item>From Gallery</item>
         <item>From Camera</item>

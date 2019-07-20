@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -25,6 +27,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -50,12 +53,14 @@ import com.tr.guvencmakina.guvencapp.Products.ui.activities.ProductsActivity;
 import com.tr.guvencmakina.guvencapp.R;
 import com.tr.guvencmakina.guvencapp.Utils.UiHelper;
 import com.tr.guvencmakina.guvencapp.Welcome.ui.WelcomeActivity;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 import es.dmoral.toasty.Toasty;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private String TAG = "main_activity";
@@ -73,8 +78,8 @@ public class MainActivity extends AppCompatActivity
     ShimmerFrameLayout shimmer_l;
     List<ProductCategory> productCategories = new ArrayList<>();
     public static List<Product> products = new ArrayList<>();
-    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
     public static List<String> product_category_names = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,19 +88,13 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         ButterKnife.bind(this);
         productsCategoryCardViewAdapter = new ProductsCategoryCardViewAdapter(this);
-//        if (mDatabaseReference == null) {
-//            FirebaseDatabase database = FirebaseDatabase.getInstance();
-//            database.setPersistenceEnabled(true);
-//            mDatabaseReference = database.getReference();
-//        }
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-     //   recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
+        //   recyclerView.addItemDecoration(new GridSpacingItemDecoration(2, dpToPx(10), true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(productsCategoryCardViewAdapter);
-
-        productsCategoryCardViewAdapter.setOnClickListener((view,position)->{
-            TextView  name = view.findViewById(R.id.product_name);
+        productsCategoryCardViewAdapter.setOnClickListener((view, position) -> {
+            TextView name = view.findViewById(R.id.product_name);
             shimmer_l.setVisibility(View.VISIBLE);
             shimmer_l.startShimmerAnimation();
             getProductsListner(name.getText().toString());
@@ -128,13 +127,13 @@ public class MainActivity extends AppCompatActivity
 
         // get & set nav_header_view views
         View nav_header_view = navigationView.getHeaderView(0);
-        ImageView user_image_view= nav_header_view.findViewById(R.id.user_image_view);
+        ImageView user_image_view = nav_header_view.findViewById(R.id.user_image_view);
         TextView user_name_tv = nav_header_view.findViewById(R.id.user_name_tv);
         TextView user_email_tv = nav_header_view.findViewById(R.id.email_tv);
         LinearLayout header_loader = nav_header_view.findViewById(R.id.loading_view);
 
 
-        if(WelcomeActivity.logged_in_user != null){
+        if (WelcomeActivity.logged_in_user != null) {
             String uid = WelcomeActivity.logged_in_user.getUid();
             myRef = FirebaseDatabase.getInstance().getReference("users").child(uid);
             header_loader.setVisibility(View.VISIBLE);
@@ -147,7 +146,7 @@ public class MainActivity extends AppCompatActivity
                     // This method is called once with the initial value and again
                     // whenever data at this location is updated.
                     User user_value = dataSnapshot.getValue(User.class);
-                    if(user_value != null){
+                    if (user_value != null) {
                         header_loader.setVisibility(View.GONE);
                         user_name_tv.setVisibility(View.VISIBLE);
                         user_email_tv.setVisibility(View.VISIBLE);
@@ -156,12 +155,12 @@ public class MainActivity extends AppCompatActivity
                         user_email_tv.setText(user_value.getEmail());
 
                         UiHelper.USERTYPE = user_value.getType();
-                        if(user_value.getType().equalsIgnoreCase("admin")){
+                        if (user_value.getType().equalsIgnoreCase("admin")) {
                             add_menu.setVisibility(View.VISIBLE);
                         } else {
                             add_menu.setVisibility(View.GONE);
                         }
-                    //    user_image_view.setImageResource(R.drawable.flag_burkina_faso);
+                        //    user_image_view.setImageResource(R.drawable.flag_burkina_faso);
 
                         Log.d(TAG, "Value is: " + user_value.toString());
                     }
@@ -171,8 +170,8 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onCancelled(DatabaseError error) {
                     // Failed to read value
-                 //   Log.w(TAG, "Failed to read value.", error.toException());
-                    Toasty.error(MainActivity.this,error.getMessage()).show();
+                    //   Log.w(TAG, "Failed to read value.", error.toException());
+                    Toasty.error(MainActivity.this, error.getMessage()).show();
                 }
             });
 
@@ -188,93 +187,24 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void getCategoryListiner(){
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("product_categories");
-        databaseReference.keepSynced(true);
-        databaseReference.addValueEventListener(new ValueEventListener() {
+    public void getCategoryListiner() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child("product_categories").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshots) {
                 productCategories = new ArrayList<>();
-                for (DataSnapshot dataSnapshot: dataSnapshots.getChildren()) {
+                for (DataSnapshot dataSnapshot : dataSnapshots.getChildren()) {
                     // TODO: handle the post
                     String productCategoryKey = dataSnapshot.getKey();
                     ProductCategory productCategory = dataSnapshot.getValue(ProductCategory.class);
                     productCategory.setUid(productCategoryKey);
                     System.out.println("Added category " + productCategory.toString());
                     product_category_names.add(productCategory.getName());
-                    if(!productCategories.contains(productCategory)){
+                    if (!productCategories.contains(productCategory)) {
                         productCategories.add(productCategory);
                     }
                 }
                 productsCategoryCardViewAdapter.update(productCategories);
-               // productsCategoryCardViewAdapter.notifyDataSetChanged();
-                shimmer_l.stopShimmerAnimation();
-                shimmer_l.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-           //     databaseReference.removeEventListener(null);
-                Log.w(TAG, "productCategories:onCancelled", databaseError.toException());
-            }
-        });
-
-    }
-
-    public void getProductsListner(String category){
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("products");
-        Query query = databaseReference.orderByChild("category").equalTo(category);
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshots) {
-                products = new ArrayList<>();
-                for (DataSnapshot dataSnapshot: dataSnapshots.getChildren()) {
-                    // TODO: handle the post
-                    String productCategoryKey = dataSnapshot.getKey();
-                    Product product = dataSnapshot.getValue(Product.class);
-                   // product.setUid(productCategoryKey);
-               //     System.out.println("Added product " + product.toString());
-                    products.add(product);
-                }
-
-                shimmer_l.stopShimmerAnimation();
-                shimmer_l.setVisibility(View.GONE);
-                if(products.size() > 0){
-                    Intent intent = new Intent(MainActivity.this, ProductsActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-                } else {
-                    Toasty.info(getApplicationContext(),"Sorry " + category + " has no products.").show();
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting Post failed, log a message
-                Log.w(TAG, "productCategories:onCancelled", databaseError.toException());
-            }
-        });
-
-
-
-    }
-    public void searchProductCategories(String queryText){
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("product_categories");
-        Query query = databaseReference.orderByKey().equalTo(queryText);
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshots) {
-                List<ProductCategory> categories = new ArrayList<>();
-                for (DataSnapshot dataSnapshot: dataSnapshots.getChildren()) {
-                    // TODO: handle the post
-                    String productCategoryKey = dataSnapshot.getKey();
-                    ProductCategory productCategory = dataSnapshot.getValue(ProductCategory.class);
-                    productCategory.setUid(productCategoryKey);
-                    categories.add(productCategory);
-                }
-                productsCategoryCardViewAdapter.update(categories);
                 // productsCategoryCardViewAdapter.notifyDataSetChanged();
                 shimmer_l.stopShimmerAnimation();
                 shimmer_l.setVisibility(View.GONE);
@@ -283,14 +213,51 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Getting Post failed, log a message
+                //     databaseReference.removeEventListener(null);
+                Log.w(TAG, "productCategories:onCancelled", databaseError.toException());
+            }
+        });
+
+    }
+
+    public void getProductsListner(String category) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.keepSynced(true);
+        Query query = databaseReference.child("products").orderByChild("category").equalTo(category);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshots) {
+                products = new ArrayList<>();
+                for (DataSnapshot dataSnapshot : dataSnapshots.getChildren()) {
+                    // TODO: handle the post
+                    String productCategoryKey = dataSnapshot.getKey();
+                    Product product = dataSnapshot.getValue(Product.class);
+                    // product.setUid(productCategoryKey);
+                    //     System.out.println("Added product " + product.toString());
+                    products.add(product);
+                }
+
+                shimmer_l.stopShimmerAnimation();
+                shimmer_l.setVisibility(View.GONE);
+                if (products.size() > 0) {
+                    Intent intent = new Intent(MainActivity.this, ProductsActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                } else {
+                    Toasty.info(getApplicationContext(), "Sorry " + category + " has no products.").show();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
                 Log.w(TAG, "productCategories:onCancelled", databaseError.toException());
             }
         });
 
 
-
     }
-
 
     @Override
     public void onBackPressed() {
@@ -298,14 +265,14 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-          //  super.onBackPressed();
+            //  super.onBackPressed();
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-      //  getMenuInflater().inflate(R.menu.main, menu);
+        //  getMenuInflater().inflate(R.menu.main, menu);
         // Inflate the options menu from XML
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
@@ -322,30 +289,31 @@ public class MainActivity extends AppCompatActivity
             @Override
             public boolean onQueryTextSubmit(String query) {
                 System.out.println("search query " + query);
-               // productsCategoryCardViewAdapter.getFilter().filter(query);
-                ArrayList<ProductCategory> newList=new ArrayList<>();
-                for (ProductCategory p : productCategories){
+                // productsCategoryCardViewAdapter.getFilter().filter(query);
+                ArrayList<ProductCategory> newList = new ArrayList<>();
+                for (ProductCategory p : productCategories) {
                     System.out.println("ProductCategory " + p.toString());
                     String name = p.getUid().toLowerCase();
-                      if (name.contains(query.toLowerCase())){
+                    if (name.contains(query.toLowerCase())) {
                         newList.add(p);
                     }
                 }
                 productsCategoryCardViewAdapter.update(newList);
-             //   searchProductCategories(query);
+                //   searchProductCategories(query);
                 return false;
             }
+
             @Override
             public boolean onQueryTextChange(String newText) {
                 //productsCategoryCardViewAdapter.getFilter().filter(newText);
                 System.out.println("search query " + newText);
-             //   searchProductCategories(newText);
-                ArrayList<ProductCategory> newList=new ArrayList<>();
-                for (ProductCategory p : productCategories){
+                //   searchProductCategories(newText);
+                ArrayList<ProductCategory> newList = new ArrayList<>();
+                for (ProductCategory p : productCategories) {
                     System.out.println("ProductCategory " + p.toString());
                     String name = p.getUid().toLowerCase();
                     System.out.println(" p.getUid() " + p.getUid());
-                    if (name.contains(newText.toLowerCase())){
+                    if (name.contains(newText.toLowerCase())) {
                         newList.add(p);
                     }
                 }
@@ -355,6 +323,7 @@ public class MainActivity extends AppCompatActivity
         });
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -385,14 +354,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
             overridePendingTransition(R.anim.fadein, R.anim.fadeout);
         } else if (id == R.id.help) {
-//            Intent callIntent = new Intent(Intent.ACTION_CALL);
-//            callIntent.setData(Uri.parse("tel:0377778888"));
-//
-//            if (ActivityCompat.checkSelfPermission(MainActivity.this,
-//                    Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
-//            startActivity(callIntent);
+           callPhoneNumber("+905412596344");
         }  else if (id == R.id.log_out) {
             logOut();
         }
@@ -400,6 +362,29 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+    public void callPhoneNumber(String phone) {
+        try {
+            if(Build.VERSION.SDK_INT > 22) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CALL_PHONE}, 101);
+                    return;
+                }
+
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + phone));
+                startActivity(callIntent);
+
+            } else {
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + phone));
+                startActivity(callIntent);
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
 }
